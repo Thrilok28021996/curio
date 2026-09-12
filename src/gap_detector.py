@@ -154,37 +154,79 @@ class GapDetector:
     ) -> Gap | None:
         """Check if the observation contradicts stored knowledge.
 
-        This is a simplified check — looks for negation patterns
-        and explicit contradiction signals.
+        Checks for:
+        1. Negation patterns (is not, doesn't, etc.)
+        2. Replacement signals (now uses, replaced with, etc.)
+        3. Value conflicts (different values for same key)
+        4. Explicit deprecation markers
         """
         content_lower = observation.content.lower()
 
-        # Simple contradiction signals
+        # Contradiction signals
         negation_patterns = [
             "is not", "doesn't", "does not", "is no longer",
             "was changed to", "was updated to", "now uses",
-            "replaced with", "deprecated",
+            "replaced with", "deprecated", "removed",
+            "switched to", "migrated to", "upgraded to",
+            "downgraded to", "was replaced", "no longer uses",
         ]
 
         for match in matches:
             node = match["node"]
             node_lower = node.content.lower()
 
+            # Check negation patterns
             for pattern in negation_patterns:
-                if (pattern in content_lower and
-                        any(w in node_lower for w in pattern.split())):
-                    return Gap(
-                        type=GapType.CONTRADICTORY,
-                        topic=node.domain or self._extract_topic(observation.content),
-                        description=(
-                            f"Observation may contradict stored knowledge. "
-                            f"Stored: {node.content[:150]}... "
-                            f"New: {observation.content[:150]}..."
-                        ),
-                        confidence=0.4,
-                        priority=Priority.HIGH,
-                        source_observation=observation.observation_id,
-                    )
+                if pattern in content_lower:
+                    # Check if the stored knowledge has a conflicting value
+                    # Extract key terms from both
+                    node_terms = set(node_lower.split()) - {"the", "a", "an", "is", "are", "was", "were", "for", "with", "and", "or"}
+                    content_terms = set(content_lower.split()) - {"the", "a", "an", "is", "are", "was", "were", "for", "with", "and", "or"}
+
+                    # If both mention similar topics but different values
+                    common = node_terms & content_terms
+                    if len(common) >= 2:
+                        return Gap(
+                            type=GapType.CONTRADICTORY,
+                            topic=node.domain or self._extract_topic(observation.content),
+                            description=(
+                                f"Observation contradicts stored knowledge. "
+                                f"Stored: {node.content[:150]}... "
+                                f"New: {observation.content[:150]}..."
+                            ),
+                            confidence=0.5,
+                            priority=Priority.HIGH,
+                            source_observation=observation.observation_id,
+                        )
+
+            # Check for value conflicts on technical terms
+            # Look for patterns like "X uses Y" vs "X uses Z"
+            import re
+            uses_pattern = r"(?:uses?|uses?|configured? as|set to|default[sd]? to)\s+(\S+)"
+            node_uses = re.findall(uses_pattern, node_lower)
+            content_uses = re.findall(uses_pattern, content_lower)
+
+            if node_uses and content_uses:
+                # Both specify a value — check if they conflict
+                for nv in node_uses:
+                    for cv in content_uses:
+                        if (nv != cv and len(nv) > 2 and len(cv) > 2
+                                and nv not in ("a", "an", "the")
+                                and cv not in ("a", "an", "the")):
+                            # Different values — likely contradiction
+                            return Gap(
+                                type=GapType.CONTRADICTORY,
+                                topic=node.domain or self._extract_topic(observation.content),
+                                description=(
+                                    f"Value conflict detected. "
+                                    f"Stored: {nv} | New: {cv}. "
+                                    f"Stored: {node.content[:100]}... "
+                                    f"New: {observation.content[:100]}..."
+                                ),
+                                confidence=0.6,
+                                priority=Priority.HIGH,
+                                source_observation=observation.observation_id,
+                            )
 
         return None
 
