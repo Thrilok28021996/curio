@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curio — Pricing</title>
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #141416;
+    --surface-hover: #1c1c1f;
+    --border: #27272a;
+    --border-accent: #3f3f46;
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --text-dim: #71717a;
+    --accent: #22d3ee;
+    --accent-dim: rgba(34, 211, 238, 0.1);
+    --accent-glow: rgba(34, 211, 238, 0.15);
+    --green: #4ade80;
+    --green-dim: rgba(74, 222, 128, 0.1);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  header {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--bg);
+  }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .header-nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.15s;
+  }
+
+  .header-nav a:hover { color: var(--text); }
+
+  .btn-ghost {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--border-accent);
+    background: var(--surface);
+  }
+
+  .btn-accent {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-accent:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Hero */
+  .hero {
+    padding: 80px 0 48px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* Toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .toggle-label {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .toggle-label.active { color: var(--text); font-weight: 500; }
+
+  .toggle {
+    width: 44px;
+    height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle.on { background: var(--accent); }
+
+  .toggle-dot {
+    width: 18px;
+    height: 18px;
+    background: var(--text);
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s;
+  }
+
+  .toggle.on .toggle-dot { transform: translateX(20px); }
+
+  .save-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-dim);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* Pricing Grid */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 48px 0 80px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--border-accent); }
+
+  .card.featured {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, var(--accent-dim) 0%, var(--surface) 40%);
+  }
+
+  .card.featured:hover { border-color: var(--accent); }
+
+  .badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .card-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    min-height: 42px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .price {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .price-period {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .price-note {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    min-height: 20px;
+  }
+
+  .card-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 24px;
+  }
+
+  .card-btn:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-accent);
+  }
+
+  .card.featured .card-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .card.featured .card-btn:hover {
+    opacity: 0.9;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 24px;
+  }
+
+  .feature-group-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .feature-list li {
+    font-size: 14px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .feature-list li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border-radius: 50%;
+    margin-top: 3px;
+  }
+
+  .feature-list li.yes::before {
+    background: var(--accent-dim);
+    border: 1.5px solid var(--accent);
+  }
+
+  .feature-list li.no::before {
+    background: transparent;
+    border: 1.5px solid var(--border);
+  }
+
+  .feature-list li.no {
+    color: var(--text-dim);
+  }
+
+  /* Comparison Table */
+  .comparison {
+    padding: 0 0 80px;
+  }
+
+  .comparison h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .comp-table th,
+  .comp-table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-table th {
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .comp-table th:not(:first-child) {
+    text-align: center;
+  }
+
+  .comp-table td:not(:first-child) {
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  .comp-table td:first-child {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .comp-table tr:hover td {
+    background: var(--surface);
+  }
+
+  .comp-table .section-row td {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 24px;
+    border-bottom: 1px solid var(--border-accent);
+  }
+
+  .check { color: var(--accent); font-weight: 600; }
+  .dash { color: var(--text-dim); }
+
+  /* FAQ */
+  .faq {
+    padding: 0 0 80px;
+  }
+
+  .faq h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .faq-q {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .faq-a {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 32px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .header-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">C</div>
+      <span class="logo-text">curio</span>
+    </a>
+    <div class="header-nav">
+      <a href="#">Docs</a>
+      <a href="#">GitHub</a>
+      <a href="#">Changelog</a>
+      <button class="btn-ghost">Sign in</button>
+      <button class="btn-accent">Get Started</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Learn more.<br><span>Store less.</span></h1>
+    <p>Curio detects what you don't know, learns what matters, and forgets what doesn't. Your knowledge graph that gets smarter over time.</p>
+
+    <div class="toggle-row">
+      <span class="toggle-label active">Monthly</span>
+      <div class="toggle" id="billingToggle" onclick="toggleBilling()">
+        <div class="toggle-dot"></div>
+      </div>
+      <span class="toggle-label">Annually</span>
+      <span class="save-badge">Save 20%</span>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="pricing-grid">
+
+    <!-- Free -->
+    <div class="card">
+      <div class="card-name">Free</div>
+      <div class="card-desc">Full learning loop. Local-first. No credit card.</div>
+      <div class="price-row">
+        <span class="price">$0</span>
+      </div>
+      <div class="price-note">Free forever</div>
+      <button class="card-btn">Install CLI</button>
+
+      <div class="divider"></div>
+
+      <div class="feature-group-label">Learning Engine</div>
+      <ul class="feature-list">
+        <li class="yes">Autonomous gap detection</li>
+        <li class="yes">Selective knowledge storage</li>
+        <li class="yes">Confidence scoring</li>
+        <li class="yes">Source verification</li>
+        <li class="yes">Forgetting &amp; consolidation</li>
+        <li class="yes">Learning progress tracking</li>
+      </ul>
+
+      <div class="feature-group-label">Interface</div>
+      <ul class="feature-list">
+        <li class="yes">CLI + MCP server</li>
+        <li class="yes">Unlimited projects</li>
+        <li class="yes">Local knowledge graph</li>
+        <li class="yes">Full audit trail</li>
+        <li class="no">Cloud sync</li>
+        <li class="no">Team sharing</li>
+      </ul>
+    </div>
+
+    <!-- Pro -->
+    <div class="card featured">
+      <div class="badge">Most Popular</div>
+      <div class="card-name">Pro</div>
+      <div class="card-desc">Cloud sync, cross-device access, weekly learning reports.</div>
+      <div class="price-row">
+        <span class="price" data-monthly="20" data-annual="16">$20</span>
+        <span class="price-period">/month</span>
+      </div>
+      <div class="price-note" data-monthly="Billed monthly" data-annual="Billed annually ($192/yr)">Billed monthly</div>
+      <button class="card-btn">Start 14-day trial</button>
+
+      <div class="divider"></div>
+
+      <div class="feature-group-label">Everything in Free, plus</div>
+      <ul class="feature-list">
+        <li class="yes">Cloud knowledge backup</li>
+        <li class="yes">Cross-device sync</li>
+        <li class="yes">Weekly learning digest (email)</li>
+        <li class="yes">Priority support</li>
+        <li class="yes">Advanced gap analytics</li>
+        <li class="no">Team features</li>
+      </ul>
+    </div>
+
+    <!-- Team -->
+    <div class="card">
+      <div class="card-name">Team</div>
+      <div class="card-desc">Shared knowledge graph. Onboard devs faster. Institutional memory.</div>
+      <div class="price-row">
+        <span class="price" data-monthly="50" data-annual="40">$50</span>
+        <span class="price-period">/user/month</span>
+      </div>
+      <div class="price-note" data-monthly="Billed monthly" data-annual="Billed annually ($480/user/yr)">Billed monthly</div>
+      <button class="card-btn">Contact Sales</button>
+
+      <div class="divider"></div>
+
+      <div class="feature-group-label">Everything in Pro, plus</div>
+      <ul class="feature-list">
+        <li class="yes">Shared team knowledge graph</li>
+        <li class="yes">Onboarding mode for new devs</li>
+        <li class="yes">Admin dashboard</li>
+        <li class="yes">SSO / SAML</li>
+        <li class="yes">Audit logs for compliance</li>
+        <li class="yes">Dedicated support</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<section class="comparison container">
+  <h2>Compare plans</h2>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Free</th>
+        <th>Pro</th>
+        <th>Team</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="section-row"><td colspan="4">Learning Engine</td></tr>
+      <tr><td>Gap detection</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Selective storage</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Confidence scoring</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Source verification</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Forgetting &amp; consolidation</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Learning progress</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+
+      <tr class="section-row"><td colspan="4">Interface</td></tr>
+      <tr><td>CLI</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>MCP server</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Projects</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><td>Audit trail</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+
+      <tr class="section-row"><td colspan="4">Sync &amp; Cloud</td></tr>
+      <tr><td>Local knowledge graph</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Cloud backup</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Cross-device sync</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Weekly learning digest</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+
+      <tr class="section-row"><td colspan="4">Team</td></tr>
+      <tr><td>Shared knowledge graph</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+      <tr><td>Onboarding mode</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+      <tr><td>Admin dashboard</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+      <tr><td>SSO / SAML</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+      <tr><td>Compliance audit logs</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+
+      <tr class="section-row"><td colspan="4">Support</td></tr>
+      <tr><td>Community</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Priority support</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td>Dedicated support</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="faq container">
+  <h2>Frequently asked questions</h2>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q">Do I need my own API key?</div>
+      <div class="faq-a">Yes. Curio uses your API key for LLM calls (OpenAI, Anthropic, etc.). You pay the provider directly. Curio never charges for model usage.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is my code sent to your servers?</div>
+      <div class="faq-a">The Free tier is fully local — nothing leaves your machine. Pro and Team sync your knowledge graph (lessons, not source code) to encrypted cloud storage.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does Curio actually learn?</div>
+      <div class="faq-a">Curio learns compressed lessons — not raw files. "Auth uses JWT RS256, refresh tokens expire in 7 days" — sourced, dated, and confidence-scored. Not the entire config file.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I export or delete my knowledge?</div>
+      <div class="faq-a">Yes. Export your knowledge graph as JSON at any time. Delete everything with one command. You own your data, always.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How is this different from RAG?</div>
+      <div class="faq-a">RAG retrieves what matches a query. Curio decides what's worth learning, verifies it, stores it as a lesson, and forgets what becomes irrelevant. It's a learning system, not a search system.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is there a free trial for Pro?</div>
+      <div class="faq-a">Yes. 14 days, no credit card required. Full access to Pro features. Downgrade to Free anytime.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Curio — AI that knows what it doesn't know. &copy; 2026</p>
+  </div>
+</footer>
+
+<script>
+  let isAnnual = false;
+
+  function toggleBilling() {
+    isAnnual = !isAnnual;
+    const toggle = document.getElementById('billingToggle');
+    const labels = document.querySelectorAll('.toggle-label');
+
+    toggle.classList.toggle('on', isAnnual);
+    labels[0].classList.toggle('active', !isAnnual);
+    labels[1].classList.toggle('active', isAnnual);
+
+    document.querySelectorAll('.price[data-monthly]').forEach(el => {
+      el.textContent = '$' + (isAnnual ? el.dataset.annual : el.dataset.monthly);
+    });
+
+    document.querySelectorAll('.price-note[data-monthly]').forEach(el => {
+      el.textContent = isAnnual ? el.dataset.annual : el.dataset.monthly;
+    });
+  }
+</script>
+
+</body>
+</html>

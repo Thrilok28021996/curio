@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Data (contains learned knowledge — do not commit)
+data/*.db
+data/*.jsonl
+data/knowledge_graph/
+data/audit_log/
+
+# Evaluation results (regenerate, don't commit)
+eval/results/*.json
+eval/results/*.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
