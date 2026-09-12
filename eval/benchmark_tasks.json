@@ -1,0 +1,102 @@
+[
+  {
+    "id": "bench-001",
+    "name": "Basic knowledge storage and retrieval",
+    "type": "storage",
+    "steps": [
+      {"action": "teach", "content": "The API uses JWT RS256 authentication", "domain": "auth"},
+      {"action": "know", "expected_content_contains": ["JWT", "RS256"]},
+      {"action": "confidence", "topic": "JWT RS256", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-002",
+    "name": "Gap detection on unknown topic",
+    "type": "gap_detection",
+    "steps": [
+      {"action": "observe", "content": "The CI/CD pipeline uses GitHub Actions with 3 stages", "source": ".github/workflows/deploy.yml"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-003",
+    "name": "Contradiction detection",
+    "type": "contradiction",
+    "steps": [
+      {"action": "teach", "content": "Authentication uses JWT with RS256 signing", "domain": "auth"},
+      {"action": "observe", "content": "Authentication is no longer using JWT, now uses OAuth2", "source": "auth_v2.py"},
+      {"action": "gaps", "expected_gap_type": "CONTRADICTORY"}
+    ]
+  },
+  {
+    "id": "bench-004",
+    "name": "Stale knowledge detection",
+    "type": "staleness",
+    "steps": [
+      {"action": "teach", "content": "Database connection pool size is 10", "domain": "database"},
+      {"action": "observe", "content": "Database connection pool size was increased to 50", "source": "config.py"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-005",
+    "name": "Confidence scoring",
+    "type": "confidence",
+    "steps": [
+      {"action": "teach", "content": "Rate limit is 100 requests per minute", "domain": "api", "confidence": 0.9},
+      {"action": "confidence", "topic": "rate limit", "expected_min": 0.8},
+      {"action": "confidence", "topic": "quantum physics", "expected_max": 0.1}
+    ]
+  },
+  {
+    "id": "bench-006",
+    "name": "Consolidation preserves important knowledge",
+    "type": "consolidation",
+    "steps": [
+      {"action": "teach", "content": "Critical: never delete the production database", "domain": "safety", "confidence": 0.95},
+      {"action": "consolidate"},
+      {"action": "confidence", "topic": "production database", "expected_min": 0.8}
+    ]
+  },
+  {
+    "id": "bench-007",
+    "name": "Multiple topics tracked separately",
+    "type": "multi_domain",
+    "steps": [
+      {"action": "teach", "content": "Backend uses FastAPI framework", "domain": "backend"},
+      {"action": "teach", "content": "Frontend uses React with TypeScript", "domain": "frontend"},
+      {"action": "teach", "content": "Database is PostgreSQL", "domain": "database"},
+      {"action": "know", "expected_min_items": 3},
+      {"action": "confidence", "topic": "FastAPI", "expected_min": 0.5},
+      {"action": "confidence", "topic": "React", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-008",
+    "name": "Audit trail completeness",
+    "type": "audit",
+    "steps": [
+      {"action": "teach", "content": "Test fact for audit trail", "domain": "test"},
+      {"action": "audit", "expected_min_entries": 1}
+    ]
+  },
+  {
+    "id": "bench-009",
+    "name": "Progress tracking",
+    "type": "progress",
+    "steps": [
+      {"action": "teach", "content": "Fact A about project architecture", "domain": "architecture"},
+      {"action": "teach", "content": "Fact B about deployment process", "domain": "deployment"},
+      {"action": "progress", "expected_min_knowledge": 2}
+    ]
+  },
+  {
+    "id": "bench-010",
+    "name": "Web search integration",
+    "type": "web_search",
+    "steps": [
+      {"action": "observe", "content": "The project uses Docker for containerization", "source": "Dockerfile"},
+      {"action": "know", "expected_min_items": 1}
+    ]
+  }
+]

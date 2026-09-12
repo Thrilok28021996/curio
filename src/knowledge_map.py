@@ -45,8 +45,29 @@ class KnowledgeMap:
         ]
 
     def what_i_dont_know(self) -> list[dict[str, Any]]:
-        """Return all open knowledge gaps, prioritized."""
+        """Return all unresolved knowledge gaps, prioritized."""
         gaps = self.store.get_open_gaps()
+
+        # Also include deferred gaps
+        from .knowledge_store import KnowledgeStore
+        cur = self.store.conn.cursor()
+        cur.execute(
+            "SELECT * FROM gaps WHERE status = 'DEFERRED' ORDER BY created_at DESC"
+        )
+        for row in cur.fetchall():
+            from .models import Gap as GapModel, GapType, Priority
+            gap = GapModel(
+                gap_id=row["gap_id"],
+                type=GapType(row["type"]),
+                topic=row["topic"],
+                description=row["description"],
+                confidence=row["confidence"],
+                priority=Priority(row["priority"]),
+                source_observation=row["source_observation"],
+                created_at=row["created_at"],
+                status=row["status"],
+            )
+            gaps.append(gap)
 
         return [
             {
