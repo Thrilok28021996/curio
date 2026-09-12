@@ -10,6 +10,7 @@ from __future__ import annotations
 from .audit_log import AuditLog
 from .knowledge_store import KnowledgeStore
 import json
+import logging
 from .models import (
     AuditAction, Gap, KnowledgeNode, RawInfo, SourceRecord,
     _now, _uuid,
@@ -22,6 +23,7 @@ class KnowledgeIntegrator:
     def __init__(self, store: KnowledgeStore, audit: AuditLog):
         self.store = store
         self.audit = audit
+        self.logger = logging.getLogger(__name__)
 
     def integrate(self, gap: Gap, raw_info: RawInfo) -> KnowledgeNode | None:
         """Process raw information into a knowledge node.
@@ -99,24 +101,31 @@ class KnowledgeIntegrator:
     def _extract_lesson(self, gap: Gap, raw_info: RawInfo) -> str:
         """Extract a concise lesson from raw information.
 
-        In production, this would use an LLM to distill the
-        raw text into a structured lesson. For now, we do
-        basic extraction.
+        Uses LLM for intelligent extraction when available.
+        Falls back to basic extraction.
         """
-        text = raw_info.raw_text
+        try:
+            from .llm import extract_lesson
+            lesson = extract_lesson(raw_info.raw_text, gap.topic)
+            if lesson and len(lesson) > 10:
+                return lesson
+        except Exception as e:
+            self.logger.debug(f"LLM extraction failed, using fallback: {e}")
 
-        # Take the most relevant portion
-        # Look for the gap topic in the text
+        # Fallback: basic extraction
+        return self._simple_extract(gap, raw_info)
+
+    def _simple_extract(self, gap: Gap, raw_info: RawInfo) -> str:
+        """Basic extraction without LLM."""
+        text = raw_info.raw_text
         topic_lower = gap.topic.lower()
         lines = text.split("\n")
 
         relevant_lines = []
         for line in lines:
             line_lower = line.lower()
-            # Include lines that mention the topic
             if any(word in line_lower for word in topic_lower.split()):
                 relevant_lines.append(line.strip())
-            # Include lines that look like facts/definitions
             elif any(marker in line_lower for marker in [
                 "is a", "refers to", "means", "defined as",
                 "the rule", "the requirement", "must", "shall",
@@ -125,12 +134,8 @@ class KnowledgeIntegrator:
                 relevant_lines.append(line.strip())
 
         if relevant_lines:
-            lesson = "\n".join(relevant_lines[:10])  # Cap at 10 lines
-        else:
-            # Fallback: first 500 chars of raw text
-            lesson = text[:500]
-
-        return lesson
+            return "\n".join(relevant_lines[:10])
+        return text[:500]
 
     def _find_connections(self, lesson: str, gap: Gap) -> list[str]:
         """Find existing knowledge nodes that relate to this lesson."""
