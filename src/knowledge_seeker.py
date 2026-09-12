@@ -32,8 +32,8 @@ class KnowledgeSeeker:
         """Seek information to fill a gap.
 
         Steps:
-        1. Identify source candidates
-        2. Retrieve content from candidates
+        1. Search local knowledge store
+        2. Search the web if local results are insufficient
         3. Record provenance
         4. Return raw information package
 
@@ -45,8 +45,7 @@ class KnowledgeSeeker:
         # Retrieve from local knowledge first
         local_results = self._search_local(gap)
 
-        # In production, this would also search the web
-        # For now, we collect what we can find locally
+        # Collect sources and raw texts
         sources: list[SourceRecord] = []
         raw_texts: list[str] = []
 
@@ -60,6 +59,19 @@ class KnowledgeSeeker:
             )
             sources.append(source)
             raw_texts.append(result.get("content", ""))
+
+        # If few local results, search the web
+        if len(raw_texts) < 2:
+            web_results = self._search_web(queries[0] if queries else gap.topic)
+            for result in web_results:
+                source = SourceRecord(
+                    url=result.get("url", ""),
+                    title=result.get("title", ""),
+                    trust_score=0.6,  # Web results start with moderate trust
+                    reliability="SECONDARY",
+                )
+                sources.append(source)
+                raw_texts.append(result.get("snippet", ""))
 
         # If we found enough, package it
         if not raw_texts:
@@ -88,6 +100,8 @@ class KnowledgeSeeker:
             target_id=gap.gap_id,
             sources_found=len(sources),
             total_chars=len(combined),
+            local_sources=len(local_results),
+            web_sources=len(sources) - len(local_results),
             queries=queries,
         )
 
@@ -135,6 +149,15 @@ class KnowledgeSeeker:
 
         results.sort(key=lambda r: r["similarity"], reverse=True)
         return results[:self.max_sources]
+
+    def _search_web(self, query: str) -> list[dict[str, Any]]:
+        """Search the web for information about a topic."""
+        try:
+            from .web_search import web_search
+            return web_search(query, max_results=3)
+        except ImportError:
+            # Web search not available
+            return []
 
     def record_source_accuracy(self, source_id: str, was_accurate: bool):
         """Record whether a source was accurate when used.

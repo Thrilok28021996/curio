@@ -65,9 +65,9 @@ class RelevanceFilter:
         )
 
         # Decision
-        if relevance > 0.5:
+        if relevance > 0.4:
             decision = LearningDecision.LEARN
-        elif relevance > 0.2:
+        elif relevance > 0.15:
             decision = LearningDecision.DEFER
         else:
             decision = LearningDecision.IGNORE
@@ -109,7 +109,7 @@ class RelevanceFilter:
     def _score_goal_alignment(self, gap: Gap) -> float:
         """How well does this gap align with active goals?"""
         if not self._active_goals:
-            return 0.3  # Neutral if no goals set
+            return 0.5  # Neutral if no goals set — don't block learning
 
         topic_lower = gap.topic.lower()
         for goal in self._active_goals:
@@ -119,12 +119,12 @@ class RelevanceFilter:
             if overlap > 0:
                 return min(1.0, overlap / max(len(goal_words), 1))
 
-        return 0.1
+        return 0.3
 
     def _score_domain_match(self, gap: Gap) -> float:
         """Is this gap in a tracked domain?"""
         if not self._tracked_domains:
-            return 0.5  # Neutral if no domains set
+            return 0.5  # Neutral if no domains set — don't block learning
 
         topic_lower = gap.topic.lower()
         for domain in self._tracked_domains:
