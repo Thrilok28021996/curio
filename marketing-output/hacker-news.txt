@@ -1,0 +1,23 @@
+Show HN: Curio – AI that learns like a child (open source update)
+
+Curio is an autonomous learning AI agent that detects knowledge gaps, seeks information to fill them, stores what matters, and forgets what doesn't.
+
+Latest updates (9 new features this week):
+
+- launch-ready — free open source
+- complete TODO list — all items done
+- add quickstart demo script
+- add LM Studio support and config file
+- add benchmark suite (10/10 passing)
+
+What makes it different:
+- Detects what it doesn't know (gap detection)
+- Decides what's worth learning (relevance scoring)
+- Searches the web automatically (DuckDuckGo, no API keys)
+- Stores concise lessons, not raw data (confidence scoring)
+- Forgets stale knowledge (principled forgetting)
+- Full audit trail (every decision logged)
+
+Works with Claude Code, Cursor, and LM Studio (fully local, no API keys).
+
+GitHub: https://github.com/Thrilok28021996/curio

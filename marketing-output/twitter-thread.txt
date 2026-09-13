@@ -1,0 +1,20 @@
+🧵 Curio update — here's what's new:
+
+✨ 9 new features:
+  • launch-ready — free open source
+  • complete TODO list — all items done
+  • add quickstart demo script
+  • add LM Studio support and config file
+  • add benchmark suite (10/10 passing)
+
+🔧 2 fixes:
+  • add visible attribution requirement to MIT license
+  • clarify MIT license terms in README
+
+📚 7 doc updates
+
+All open source. All free. All local-first.
+
+GitHub: https://github.com/Thrilok28021996/curio
+
+#AI #OpenSource #LearningAI #MCP
