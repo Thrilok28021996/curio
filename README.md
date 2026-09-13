@@ -95,6 +95,8 @@ export CURIO_LLM_BASE_URL=http://localhost:1234/v1
 curio observe "Something new" --source "file.py"
 ```
 
+**With Altra (built-in fact-checking):** Enable Altra in LM Studio settings for web search with source verification. Curio detects gaps → Altra searches and fact-checks → Curio stores verified lessons.
+
 ### Python API
 
 ```python
