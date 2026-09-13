@@ -51,5 +51,5 @@ cd curio
 bash quickstart.sh
 ```
 
-GitHub: [link]
+GitHub: https://github.com/Thrilok28021996/curio
 Docs: [link]

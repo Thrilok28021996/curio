@@ -47,7 +47,7 @@ Or manually add to `~/.lmstudio/mcp.json`:
     "curio": {
       "command": "python3",
       "args": ["-m", "src.mcp_server"],
-      "cwd": "/Users/thrilok/workspace/curio",
+      "cwd": "~/curio",
       "env": {
         "CURIO_LLM_PROVIDER": "lmstudio",
         "CURIO_LLM_BASE_URL": "http://localhost:1234/v1",

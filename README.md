@@ -37,7 +37,7 @@ Curio implements a learning loop inspired by how children learn:
 pip install curio-ai
 
 # Or clone and run directly
-git clone https://github.com/yourusername/curio
+git clone https://github.com/Thrilok28021996/curio.git
 cd curio
 bash quickstart.sh
 ```

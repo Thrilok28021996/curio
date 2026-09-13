@@ -36,10 +36,10 @@ dev = ["ddgs", "pyyaml", "pytest"]
 curio = "src.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/curio"
-Documentation = "https://github.com/yourusername/curio#readme"
-Repository = "https://github.com/yourusername/curio"
-Issues = "https://github.com/yourusername/curio/issues"
+Homepage = "https://github.com/Thrilok28021996/curio"
+Documentation = "https://github.com/Thrilok28021996/curio#readme"
+Repository = "https://github.com/Thrilok28021996/curio"
+Issues = "https://github.com/Thrilok28021996/curio/issues"
 
 [tool.setuptools.packages.find]
 include = ["src*"]
