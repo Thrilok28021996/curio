@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "curio": {
+      "command": "python3",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/Users/thrilok/workspace/curio",
+      "env": {
+        "CURIO_LLM_PROVIDER": "lmstudio",
+        "CURIO_LLM_BASE_URL": "http://localhost:1234/v1",
+        "CURIO_LLM_API_KEY": "lm-studio"
+      }
+    }
+  }
+}
