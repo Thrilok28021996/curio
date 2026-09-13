@@ -165,8 +165,8 @@ You can:
 - Include it in proprietary software
 
 You must:
-- Include the copyright notice
-- Include the MIT license
+- Include the copyright notice and license
+- Add visible attribution: "Powered by Curio" or "Built with Curio" in your product's UI, README, or documentation
 
 ## Contributing
 
