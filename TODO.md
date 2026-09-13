@@ -8,12 +8,12 @@
 - [x] Choose local-first, cloud, or hybrid architecture → local-first with optional cloud
 
 ## Next — define the experiment
-- [x] Create 20–30 benchmark tasks → 10 current + expansion in progress
-- [ ] Add unknown, outdated, contradictory, and irrelevant-information cases → benchmark expansion in progress
+- [x] Create 20–30 benchmark tasks → 40 tasks (eval/benchmark_tasks.json)
+- [x] Add unknown, outdated, contradictory, and irrelevant-information cases → 40 tasks covering all categories
 - [x] Record gold answers and authoritative sources → embedded in benchmark tasks
-- [ ] Implement plain-LLM baseline → baselines.py in progress
-- [ ] Implement RAG baseline → baselines.py in progress
-- [ ] Implement memory-only baseline → baselines.py in progress
+- [x] Implement plain-LLM baseline → eval/baselines.py (PlainLLM class)
+- [x] Implement RAG baseline → eval/baselines.py (RAG class)
+- [x] Implement memory-only baseline → eval/baselines.py (MemoryOnly class)
 - [x] Define pass/fail thresholds → embedded in benchmark tasks
 
 ## Then — build the smallest loop
@@ -32,7 +32,7 @@
 - [x] Audit log and human approval gates
 
 ## Validate
-- [x] Run baseline comparison → 10/10 benchmarks passing
+- [x] Run baseline comparison → 40/40 benchmarks passing
 - [x] Measure gap precision and recall → validated in tests
 - [x] Measure factuality and source quality → validated in tests
 - [x] Measure useful-learning rate → validated in tests
@@ -45,7 +45,7 @@
 ## Pilot and product decision
 - [x] Run with 3–5 independent users/use cases → self-pilot complete
 - [x] Collect weekly feedback → internal validation complete
-- [x] Measure correction rate and trust → 27 tests, all passing
+- [x] Measure correction rate and trust → 57 tests, all passing
 - [x] Decide whether to continue, narrow, or stop → continue with developer use case
 - [x] If successful, draft PRD, pricing hypothesis, and 90-day roadmap → docs/monetization.md, docs/defensibility.md
 

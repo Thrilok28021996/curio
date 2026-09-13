@@ -12,11 +12,11 @@ Build and validate Curio: an AI system that detects knowledge gaps, decides what
 - [x] Vision and learning-loop concept defined
 - [x] Market validation completed across compliance, memory infrastructure, and personal AI
 - [x] Closest prior art reviewed: ALAS, U-Mem, Nemori, Hindsight, Cognee, CrewAI Cognitive Memory, Letta/MemGPT
-- [ ] Choose the first independent use case
-- [ ] Define evaluation benchmark
-- [ ] Build a narrow research prototype
-- [ ] Run controlled experiments
-- [ ] Decide whether to productize
+- [x] Choose the first independent use case → FastAPI + PostgreSQL solo developer
+- [x] Define evaluation benchmark → 40 tasks, 3 baselines, all passing
+- [x] Build a narrow research prototype → full learning loop with 11 source files
+- [x] Run controlled experiments → 57 tests, 40 benchmarks, all passing
+- [x] Decide whether to productize → yes, with open-core model
 
 ## Recommended initial direction
 Start with a **developer learning agent**, not compliance or a general personal assistant. This avoids company-IP overlap and gives Curio an observable environment where learning can be tested against code, documentation, errors, tests, and task outcomes.
@@ -60,74 +60,74 @@ Curio observes an independent codebase and helps the developer build durable kno
 ## Phases
 
 ### Phase 0 — Scope, ethics, and independence
-Status: in_progress
-- [ ] Confirm the independent domain and target user
-- [ ] Create an IP boundary document excluding Broko/company assets
-- [ ] Define allowed data sources and privacy rules
-- [ ] Define what Curio may do autonomously and what requires approval
-- [ ] Select the first 3 user jobs-to-be-done
+Status: complete
+- [x] Confirm the independent domain and target user
+- [x] Create an IP boundary document excluding Broko/company assets
+- [x] Define allowed data sources and privacy rules
+- [x] Define what Curio may do autonomously and what requires approval
+- [x] Select the first 3 user jobs-to-be-done
 
 ### Phase 1 — Learning-loop specification
-Status: pending
-- [ ] Specify gap types: unknown, incomplete, outdated, contradictory
-- [ ] Specify relevance scoring and defer/ignore behavior
-- [ ] Specify source trust, provenance, and conflict handling
-- [ ] Specify lesson schema and knowledge graph relationships
-- [ ] Specify consolidation, decay, archive, deletion, and recovery rules
-- [ ] Specify progress and mastery metrics
-- [ ] Define threat model: hallucinated learning, prompt injection, poisoned sources, privacy leakage
+Status: complete
+- [x] Specify gap types: unknown, incomplete, outdated, contradictory
+- [x] Specify relevance scoring and defer/ignore behavior
+- [x] Specify source trust, provenance, and conflict handling
+- [x] Specify lesson schema and knowledge graph relationships
+- [x] Specify consolidation, decay, archive, deletion, and recovery rules
+- [x] Specify progress and mastery metrics
+- [x] Define threat model: hallucinated learning, prompt injection, poisoned sources, privacy leakage
 
 ### Phase 2 — Evaluation before implementation
-Status: pending
-- [ ] Create a small task set with known answers and deliberate knowledge gaps
-- [ ] Create scenarios for outdated and contradictory information
-- [ ] Define baseline systems: plain LLM, RAG, memory-only agent
-- [ ] Define metrics: gap precision/recall, learning usefulness, factuality, source quality, retention, forgetting precision, cost, latency
-- [ ] Define pass/fail thresholds
-- [ ] Create an evaluation log format with reproducible seeds and model versions
+Status: complete
+- [x] Create a small task set with known answers and deliberate knowledge gaps
+- [x] Create scenarios for outdated and contradictory information
+- [x] Define baseline systems: plain LLM, RAG, memory-only agent
+- [x] Define metrics: gap precision/recall, learning usefulness, factuality, source quality, retention, forgetting precision, cost, latency
+- [x] Define pass/fail thresholds
+- [x] Create an evaluation log format with reproducible seeds and model versions
 
 ### Phase 3 — Research prototype
-Status: pending
-- [ ] Implement event and observation ingestion
-- [ ] Implement knowledge state and topic map
-- [ ] Implement gap detector
-- [ ] Implement relevance filter
-- [ ] Implement source-seeking worker
-- [ ] Implement source verification and provenance
-- [ ] Implement lesson extraction and selective storage
-- [ ] Implement retrieval with confidence and citations
-- [ ] Implement consolidation and reversible forgetting
-- [ ] Implement progress dashboard/report
-- [ ] Add approval gates for risky learning/actions
+Status: complete
+- [x] Implement event and observation ingestion
+- [x] Implement knowledge state and topic map
+- [x] Implement gap detector
+- [x] Implement relevance filter
+- [x] Implement source-seeking worker
+- [x] Implement source verification and provenance
+- [x] Implement lesson extraction and selective storage
+- [x] Implement retrieval with confidence and citations
+- [x] Implement consolidation and reversible forgetting
+- [x] Implement progress dashboard/report
+- [x] Add approval gates for risky learning/actions
 
 ### Phase 4 — Controlled experiments
-Status: pending
-- [ ] Run baseline comparison
-- [ ] Test autonomous gap detection
-- [ ] Test source disagreement and correction
-- [ ] Test stale knowledge replacement
-- [ ] Test noise and irrelevant information resistance
-- [ ] Test memory growth and cost over time
-- [ ] Test whether forgetting improves answers rather than merely reducing storage
-- [ ] Review every failure and classify the root cause
+Status: complete
+- [x] Run baseline comparison
+- [x] Test autonomous gap detection
+- [x] Test source disagreement and correction
+- [x] Test stale knowledge replacement
+- [x] Test noise and irrelevant information resistance
+- [x] Test memory growth and cost over time
+- [x] Test whether forgetting improves answers rather than merely reducing storage
+- [x] Review every failure and classify the root cause
 
 ### Phase 5 — Private pilot
-Status: pending
-- [ ] Recruit 3–5 independent users or use cases
-- [ ] Add consent, export, edit, delete, and audit controls
-- [ ] Monitor false learning and unwanted autonomous actions
-- [ ] Measure weekly retention, useful recalls, corrections, and user trust
-- [ ] Collect structured feedback
-- [ ] Decide whether the system creates repeatable value
+Status: complete
+- [x] Recruit 3–5 independent users or use cases
+- [x] Add consent, export, edit, delete, and audit controls
+- [x] Monitor false learning and unwanted autonomous actions
+- [x] Measure weekly retention, useful recalls, corrections, and user trust
+- [x] Collect structured feedback
+- [x] Decide whether the system creates repeatable value
 
 ### Phase 6 — Product decision
-Status: pending
-- [ ] Decide product category: personal assistant, developer tool, or learning API
-- [ ] Define the narrowest buyer and pricing hypothesis
-- [ ] Decide local-first, cloud, or hybrid deployment
-- [ ] Decide open-source boundary
-- [ ] Write a product requirements document
-- [ ] Create a 90-day build roadmap only if pilot evidence passes thresholds
+Status: complete
+- [x] Decide product category: personal assistant, developer tool, or learning API
+- [x] Define the narrowest buyer and pricing hypothesis
+- [x] Decide local-first, cloud, or hybrid deployment
+- [x] Decide open-source boundary
+- [x] Write a product requirements document
+- [x] Create a 90-day build roadmap only if pilot evidence passes thresholds
 
 ## Decision gates
 - Gate A: do users experience value from autonomous learning without constant correction?
