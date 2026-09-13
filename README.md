@@ -156,7 +156,17 @@ python eval/run_benchmark.py
 
 ## License
 
-MIT — use it however you want.
+MIT License — free to use, modify, and distribute. See [LICENSE](LICENSE) for details.
+
+You can:
+- Use it commercially
+- Modify it
+- Distribute it
+- Include it in proprietary software
+
+You must:
+- Include the copyright notice
+- Include the MIT license
 
 ## Contributing
 
