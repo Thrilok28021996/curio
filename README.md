@@ -4,7 +4,7 @@
 
 Curio is an autonomous learning agent that detects knowledge gaps, seeks information to fill them, evaluates quality, stores what matters, forgets what doesn't, and tracks learning progress — with minimal human intervention.
 
-[![Add to LM Studio](https://lmstudio.ai/badge-add-to-lm-studio.svg)](lmstudio://add_mcp?name=curio&config=eyJjb21tYW5kIjoicHl0aG9uMyIsImFyZ3MiOlsiLW0iLCJzcmMubWNwX3NlcnZlciJdLCJlbnYiOnsiQ1VSSU9fTExNX1BST1ZJREVSIjoibG1zdHVkaW8iLCJDVVJJT19MTE1fQkFTRV9VUkwiOiJodHRwOi8vbG9jYWxob3N0OjEyMzQvdjEiLCJDVVJJT19MTE1fQVBJX0tFWSI6ImxtLXN0dWRpbyJ9fQ==)
+<a href="https://lmstudio.ai/install-mcp?name=curio&config=eyJjb21tYW5kIjoicHl0aG9uMyIsImFyZ3MiOlsiLW0iLCJzcmMubWNwX3NlcnZlciJdLCJjd2QiOiIvVXNlcnMvdGhyaWxvay93b3Jrc3BhY2UvY3VyaW8iLCJlbnYiOnsiQ1VSSU9fTExNX1BST1ZJREVSIjoibG1zdHVkaW8iLCJDVVJJT19MTE1fQkFTRV9VUkwiOiJodHRwOi8vbG9jYWxob3N0OjEyMzQvdjEiLCJDVVJJT19MTE1fQVBJX0tFWSI6ImxtLXN0dWRpbyJ9fQ=="><img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="Add MCP Server curio to LM Studio" /></a>
 
 ```
 $ curio teach "Auth uses JWT RS256" --domain "Auth"
@@ -90,6 +90,8 @@ curio audit --last 10
 ```
 
 ### LM Studio (fully local)
+
+Click the install button above, or:
 
 ```bash
 export CURIO_LLM_PROVIDER=lmstudio
