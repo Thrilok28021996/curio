@@ -1,0 +1,50 @@
+# Curio Configuration
+# Copy this to ~/.curio/config.yaml and edit
+
+# LLM provider for lesson extraction and source evaluation
+# Options: openai, anthropic, ollama, lmstudio
+llm:
+  provider: lmstudio  # or openai, anthropic, ollama
+  base_url: http://localhost:1234/v1  # LM Studio default
+  api_key: lm-studio  # LM Studio doesn't need a real key
+  model: ""  # Leave empty to use whatever LM Studio has loaded
+
+  # OpenAI settings (if using OpenAI)
+  # provider: openai
+  # api_key: sk-...
+  # model: gpt-4o-mini
+
+  # Anthropic settings (if using Anthropic)
+  # provider: anthropic
+  # api_key: sk-ant-...
+  # model: claude-3-haiku-20240307
+
+  # Ollama settings (if using Ollama)
+  # provider: ollama
+  # base_url: http://localhost:11434
+  # model: llama3.1
+
+# Knowledge store location
+store:
+  data_dir: ~/.curio
+
+# Learning behavior
+learning:
+  # Relevance threshold for LEARN decision (0.0-1.0)
+  learn_threshold: 0.4
+  # Relevance threshold for DEFER decision
+  defer_threshold: 0.15
+  # Maximum sources per gap
+  max_sources: 5
+  # Maximum characters per source
+  max_chars_per_source: 10000
+
+# Consolidation settings
+consolidation:
+  # Decay rate per day (0.995 = very slow decay)
+  decay_rate: 0.995
+  # Confidence below this = prune
+  prune_threshold: 0.1
+  # Confidence below this + age above days = archive
+  archive_threshold: 0.2
+  archive_age_days: 90

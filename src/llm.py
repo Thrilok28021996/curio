@@ -3,8 +3,10 @@
 Uses an LLM for lesson extraction and source evaluation.
 Supports OpenAI-compatible APIs (OpenAI, Anthropic via proxy, local models).
 
-Set CURIO_LLM_API_KEY and CURIO_LLM_BASE_URL environment variables,
-or use CURIO_LLM_PROVIDER=openai|anthropic|ollama.
+Configure via:
+1. Environment variables: CURIO_LLM_API_KEY, CURIO_LLM_BASE_URL, CURIO_LLM_PROVIDER
+2. Config file: ~/.curio/config.yaml
+3. LM Studio: just set provider=lmstudio (defaults to localhost:1234)
 """
 
 from __future__ import annotations
@@ -12,19 +14,54 @@ from __future__ import annotations
 import json
 import logging
 import os
+from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+
+def _load_config() -> dict[str, Any]:
+    """Load config from ~/.curio/config.yaml if it exists."""
+    config_path = Path.home() / ".curio" / "config.yaml"
+    if not config_path.exists():
+        return {}
+
+    try:
+        import yaml
+        with open(config_path) as f:
+            return yaml.safe_load(f) or {}
+    except ImportError:
+        # PyYAML not installed, try simple parsing
+        logger.debug("PyYAML not installed, skipping config file")
+        return {}
+    except Exception as e:
+        logger.debug(f"Failed to load config: {e}")
+        return {}
 
 
 class LLMClient:
     """Lightweight LLM client for Curio's learning operations."""
 
     def __init__(self):
-        self.provider = os.environ.get("CURIO_LLM_PROVIDER", "openai")
-        self.api_key = os.environ.get("CURIO_LLM_API_KEY", "")
-        self.base_url = os.environ.get("CURIO_LLM_BASE_URL", "")
-        self.model = os.environ.get("CURIO_LLM_MODEL", "gpt-4o-mini")
+        config = _load_config()
+        llm_config = config.get("llm", {})
+
+        self.provider = (
+            os.environ.get("CURIO_LLM_PROVIDER")
+            or llm_config.get("provider", "openai")
+        )
+        self.api_key = (
+            os.environ.get("CURIO_LLM_API_KEY")
+            or llm_config.get("api_key", "")
+        )
+        self.base_url = (
+            os.environ.get("CURIO_LLM_BASE_URL")
+            or llm_config.get("base_url", "")
+        )
+        self.model = (
+            os.environ.get("CURIO_LLM_MODEL")
+            or llm_config.get("model", "")
+        )
         self._client = None
 
     def _get_client(self):
@@ -32,9 +69,13 @@ class LLMClient:
         if self._client is not None:
             return self._client
 
-        if self.provider == "ollama":
-            base = self.base_url or "http://localhost:11434"
-            self._client = ("openai", base, "ollama")
+        if self.provider in ("ollama", "lmstudio"):
+            # Both use OpenAI-compatible API
+            if self.provider == "lmstudio":
+                base = self.base_url or "http://localhost:1234/v1"
+            else:
+                base = self.base_url or "http://localhost:11434"
+            self._client = ("openai", base, self.api_key or "lm-studio")
         elif self.provider == "anthropic":
             self._client = ("anthropic", self.api_key, self.model)
         else:
@@ -124,8 +165,8 @@ class LLMClient:
 
     def is_available(self) -> bool:
         """Check if the LLM client is configured and available."""
-        if self.provider == "ollama":
-            return True  # Ollama doesn't need an API key
+        if self.provider in ("ollama", "lmstudio"):
+            return True  # Local providers don't need an API key
         return bool(self.api_key)
 
 
