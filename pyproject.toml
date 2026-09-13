@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "curio-ai"
+version = "0.1.0"
+description = "AI that knows what it doesn't know — and learns it."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Thrilok"}
+]
+keywords = ["ai", "learning", "memory", "knowledge", "mcp", "agent"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.optional-dependencies]
+web = ["ddgs"]
+llm = ["pyyaml"]
+all = ["ddgs", "pyyaml"]
+dev = ["ddgs", "pyyaml", "pytest"]
+
+[project.scripts]
+curio = "src.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/curio"
+Documentation = "https://github.com/yourusername/curio#readme"
+Repository = "https://github.com/yourusername/curio"
+Issues = "https://github.com/yourusername/curio/issues"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
