@@ -160,7 +160,7 @@ class MemoryConsolidator:
                     self.audit.log(
                         AuditAction.UPDATED,
                         target_id=winner.knowledge_id,
-                        action="MERGE",
+                        merge_action="MERGE",
                         merged_from=loser.knowledge_id,
                         overlap=overlap,
                     )
