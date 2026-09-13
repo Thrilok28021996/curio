@@ -98,5 +98,306 @@
       {"action": "observe", "content": "The project uses Docker for containerization", "source": "Dockerfile"},
       {"action": "know", "expected_min_items": 1}
     ]
+  },
+  {
+    "id": "bench-011",
+    "name": "Unknown gap: concept not in knowledge base",
+    "type": "unknown_gap",
+    "steps": [
+      {"action": "observe", "content": "The system uses Redis for session caching", "source": "config.py"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-012",
+    "name": "Unknown gap: entirely novel domain",
+    "type": "unknown_gap",
+    "steps": [
+      {"action": "observe", "content": "Machine learning models are served via Triton Inference Server", "source": "ml-serving.yaml"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-013",
+    "name": "Unknown gap: observation references unknown dependency",
+    "type": "unknown_gap",
+    "steps": [
+      {"action": "observe", "content": "The service integrates with Stripe for payment processing", "source": "billing.py"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-014",
+    "name": "Unknown gap: implicit knowledge not previously taught",
+    "type": "unknown_gap",
+    "steps": [
+      {"action": "observe", "content": "Logs are shipped to Datadog with 30-day retention", "source": "logging.conf"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-015",
+    "name": "Unknown gap: procedural knowledge missing",
+    "type": "unknown_gap",
+    "steps": [
+      {"action": "observe", "content": "To deploy, run make deploy staging then make promote prod", "source": "Makefile"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-016",
+    "name": "Outdated knowledge: outdated config value",
+    "type": "outdated",
+    "steps": [
+      {"action": "teach", "content": "The app listens on port 8080", "domain": "networking"},
+      {"action": "observe", "content": "The app now listens on port 3000", "source": "server.js"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-017",
+    "name": "Outdated knowledge: deprecated library version",
+    "type": "outdated",
+    "steps": [
+      {"action": "teach", "content": "Project uses React 16.8 with class components", "domain": "frontend"},
+      {"action": "observe", "content": "Project has been upgraded to React 18 with hooks", "source": "package.json"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-018",
+    "name": "Outdated knowledge: changed deployment target",
+    "type": "outdated",
+    "steps": [
+      {"action": "teach", "content": "Production is deployed on AWS us-east-1", "domain": "infrastructure"},
+      {"action": "observe", "content": "Production has moved to GCP us-central1", "source": "terraform.tfvars"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-019",
+    "name": "Contradictory info: conflicting database choice",
+    "type": "contradiction",
+    "steps": [
+      {"action": "teach", "content": "The primary database is MySQL", "domain": "database"},
+      {"action": "teach", "content": "The primary database is PostgreSQL", "domain": "database"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-020",
+    "name": "Contradictory info: conflicting auth mechanism",
+    "type": "contradiction",
+    "steps": [
+      {"action": "teach", "content": "Authentication uses session cookies", "domain": "auth"},
+      {"action": "observe", "content": "Authentication uses Bearer token with JWT", "source": "auth.js"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-021",
+    "name": "Contradictory info: conflicting cache strategy",
+    "type": "contradiction",
+    "steps": [
+      {"action": "teach", "content": "Cache TTL is set to 5 minutes", "domain": "caching"},
+      {"action": "teach", "content": "Cache TTL is set to 1 hour", "domain": "caching"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-022",
+    "name": "Irrelevant info: off-topic observation",
+    "type": "irrelevant",
+    "steps": [
+      {"action": "teach", "content": "The project uses Python 3.11", "domain": "backend"},
+      {"action": "observe", "content": "The company has 200 employees and 3 offices", "source": "company_overview.md"},
+      {"action": "know", "expected_min_items": 1},
+      {"action": "confidence", "topic": "Python 3.11", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-023",
+    "name": "Irrelevant info: tangential technical detail",
+    "type": "irrelevant",
+    "steps": [
+      {"action": "teach", "content": "We use Terraform for IaC on AWS", "domain": "infrastructure"},
+      {"action": "observe", "content": "The office coffee machine was replaced with a new Nespresso model", "source": "office_logistics.md"},
+      {"action": "confidence", "topic": "Terraform AWS", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-024",
+    "name": "Irrelevant info: personal opinion in codebase",
+    "type": "irrelevant",
+    "steps": [
+      {"action": "teach", "content": "Error handling follows Result pattern with custom exceptions", "domain": "patterns"},
+      {"action": "observe", "content": "I think vim is better than emacs for this project", "source": "README.md"},
+      {"action": "confidence", "topic": "error handling Result pattern", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-025",
+    "name": "Web search learning: codebase observation",
+    "type": "web_search",
+    "steps": [
+      {"action": "observe", "content": "Service communicates via gRPC with protobuf definitions", "source": "service.proto"},
+      {"action": "know", "expected_min_items": 1}
+    ]
+  },
+  {
+    "id": "bench-026",
+    "name": "Web search learning: dependency update observation",
+    "type": "web_search",
+    "steps": [
+      {"action": "observe", "content": "Upgrade notes: FastAPI moved from Pydantic v1 to v2, breaking changes in validators", "source": "MIGRATION.md"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-027",
+    "name": "Web search learning: external service observation",
+    "type": "web_search",
+    "steps": [
+      {"action": "observe", "content": "Monitoring uses Prometheus with custom Grafana dashboards", "source": "monitoring.yaml"},
+      {"action": "know", "expected_min_items": 1}
+    ]
+  },
+  {
+    "id": "bench-028",
+    "name": "Confidence calibration: high confidence for well-taught topics",
+    "type": "confidence",
+    "steps": [
+      {"action": "teach", "content": "Database migration strategy uses Alembic with linear versions", "domain": "database"},
+      {"action": "teach", "content": "Alembic autogenerate detects model changes and creates migration scripts", "domain": "database"},
+      {"action": "teach", "content": "Migrations run on deploy via entrypoint.sh", "domain": "database"},
+      {"action": "confidence", "topic": "Alembic", "expected_min": 0.7}
+    ]
+  },
+  {
+    "id": "bench-029",
+    "name": "Confidence calibration: low confidence for single mention",
+    "type": "confidence",
+    "steps": [
+      {"action": "observe", "content": "The load balancer uses round-robin algorithm", "source": "nginx.conf"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-030",
+    "name": "Confidence calibration: confidence adjusts after correction",
+    "type": "confidence",
+    "steps": [
+      {"action": "teach", "content": "The API version is v1", "domain": "api"},
+      {"action": "teach", "content": "The API version is v2", "domain": "api"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-031",
+    "name": "Consolidation: low-value knowledge can be pruned",
+    "type": "consolidation",
+    "steps": [
+      {"action": "teach", "content": "Critical: database passwords must be rotated monthly", "domain": "security", "confidence": 0.95},
+      {"action": "teach", "content": "Random trivia: office plants are watered on Mondays", "domain": "misc", "confidence": 0.3},
+      {"action": "consolidate"},
+      {"action": "confidence", "topic": "database passwords", "expected_min": 0.8}
+    ]
+  },
+  {
+    "id": "bench-032",
+    "name": "Consolidation: repeated reinforcement boosts confidence",
+    "type": "consolidation",
+    "steps": [
+      {"action": "teach", "content": "The main branch is main not master", "domain": "git", "confidence": 0.8},
+      {"action": "teach", "content": "The main branch is main not master", "domain": "git", "confidence": 0.8},
+      {"action": "teach", "content": "The main branch is main not master", "domain": "git", "confidence": 0.8},
+      {"action": "consolidate"},
+      {"action": "confidence", "topic": "main branch", "expected_min": 0.7}
+    ]
+  },
+  {
+    "id": "bench-033",
+    "name": "Consolidation: merge related knowledge fragments",
+    "type": "consolidation",
+    "steps": [
+      {"action": "teach", "content": "The API endpoint /users returns a list of users", "domain": "api"},
+      {"action": "teach", "content": "The API endpoint /users accepts filter query parameter", "domain": "api"},
+      {"action": "teach", "content": "The API endpoint /users supports pagination via offset and limit", "domain": "api"},
+      {"action": "consolidate"},
+      {"action": "confidence", "topic": "/users endpoint", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-034",
+    "name": "Multi-domain: security and infra knowledge",
+    "type": "multi_domain",
+    "steps": [
+      {"action": "teach", "content": "TLS certificates are managed via cert-manager in Kubernetes", "domain": "security"},
+      {"action": "teach", "content": "Infrastructure runs on Kubernetes 1.28 with 3 node pools", "domain": "infrastructure"},
+      {"action": "confidence", "topic": "cert-manager", "expected_min": 0.5},
+      {"action": "confidence", "topic": "Kubernetes", "expected_min": 0.5},
+      {"action": "know", "expected_min_items": 2}
+    ]
+  },
+  {
+    "id": "bench-035",
+    "name": "Multi-domain: frontend and backend API contract",
+    "type": "multi_domain",
+    "steps": [
+      {"action": "teach", "content": "Backend exposes OpenAPI 3.0 spec at /docs endpoint", "domain": "api"},
+      {"action": "teach", "content": "Frontend generates TypeScript types from OpenAPI spec using openapi-typescript", "domain": "frontend"},
+      {"action": "teach", "content": "API contract tests run in CI using Prism mock server", "domain": "testing"},
+      {"action": "know", "expected_min_items": 3}
+    ]
+  },
+  {
+    "id": "bench-036",
+    "name": "Edge case: empty observation",
+    "type": "edge_case",
+    "steps": [
+      {"action": "observe", "content": "", "source": "empty_file.txt"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 0, "expected_either_gaps_min": 0}
+    ]
+  },
+  {
+    "id": "bench-037",
+    "name": "Edge case: very long observation",
+    "type": "edge_case",
+    "steps": [
+      {"action": "observe", "content": "The configuration file contains 500 environment variables covering database connections, API keys, feature flags, rate limits, timeouts, retry policies, circuit breaker thresholds, cache invalidation schedules, log rotation settings, TLS certificate paths, service mesh configurations, and monitoring alert rules. Each section has detailed comments explaining the purpose, valid ranges, and interaction with other variables.", "source": "config.env"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
+  },
+  {
+    "id": "bench-038",
+    "name": "Edge case: rapid contradictory updates",
+    "type": "edge_case",
+    "steps": [
+      {"action": "teach", "content": "Max upload size is 10MB", "domain": "api"},
+      {"action": "teach", "content": "Max upload size is 25MB", "domain": "api"},
+      {"action": "teach", "content": "Max upload size is 50MB", "domain": "api"},
+      {"action": "gaps", "expected_min_gaps": 1}
+    ]
+  },
+  {
+    "id": "bench-039",
+    "name": "Edge case: duplicate identical teachings",
+    "type": "edge_case",
+    "steps": [
+      {"action": "teach", "content": "The cache invalidation uses TTL-based expiry at 300 seconds", "domain": "caching"},
+      {"action": "teach", "content": "The cache invalidation uses TTL-based expiry at 300 seconds", "domain": "caching"},
+      {"action": "teach", "content": "The cache invalidation uses TTL-based expiry at 300 seconds", "domain": "caching"},
+      {"action": "confidence", "topic": "cache invalidation", "expected_min": 0.5}
+    ]
+  },
+  {
+    "id": "bench-040",
+    "name": "Edge case: observation with mixed signals",
+    "type": "edge_case",
+    "steps": [
+      {"action": "teach", "content": "The service runs on port 8080", "domain": "networking"},
+      {"action": "observe", "content": "Port 8080 is used by service A, port 9090 by service B, and port 3000 by the frontend. The backend service runs on 8080.", "source": "architecture.md"},
+      {"action": "know_or_gaps", "expected_either_knowledge_min": 1, "expected_either_gaps_min": 1}
+    ]
   }
 ]

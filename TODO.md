@@ -2,10 +2,10 @@
 
 ## Now — decide before building
 - [x] Select the initial path: developer learning agent → general learning engine/SDK → personal assistant
-- [ ] Pick the independent developer use case and target user
-- [ ] Write the independent-IP boundary
-- [ ] Choose three code tasks Curio must improve over time
-- [ ] Choose local-first, cloud, or hybrid architecture
+- [x] Pick the independent developer use case and target user — see docs/use-case.md
+- [x] Write the independent-IP boundary — see docs/IP_BOUNDARY.md
+- [x] Choose three code tasks Curio must improve over time — see docs/use-case.md
+- [x] Choose local-first, cloud, or hybrid architecture — local-first with optional cloud
 
 ## Next — define the experiment
 - [ ] Create 20–30 benchmark tasks
