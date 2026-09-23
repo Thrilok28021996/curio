@@ -1,10 +1,11 @@
 {
   "mcpServers": {
     "curio": {
-      "command": "python3",
+      "command": "/Volumes/personal/programmingFolders/curio/.venv/bin/python",
       "args": ["-m", "src.mcp_server"],
-      "cwd": "/Users/thrilok/workspace/curio",
+      "cwd": "/Volumes/personal/programmingFolders/curio",
       "env": {
+        "PYTHONPATH": "/Volumes/personal/programmingFolders/curio",
         "CURIO_LLM_PROVIDER": "lmstudio",
         "CURIO_LLM_BASE_URL": "http://localhost:1234/v1",
         "CURIO_LLM_API_KEY": "lm-studio"

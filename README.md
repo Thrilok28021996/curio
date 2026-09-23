@@ -4,7 +4,14 @@
 
 Curio is an autonomous learning agent that detects knowledge gaps, seeks information to fill them, evaluates quality, stores what matters, forgets what doesn't, and tracks learning progress — with minimal human intervention.
 
-<a href="https://lmstudio.ai/install-mcp?name=curio&config=eyJjb21tYW5kIjoicHl0aG9uMyIsImFyZ3MiOlsiLW0iLCJzcmMubWNwX3NlcnZlciJdLCJjd2QiOiIvVXNlcnMvdGhyaWxvay93b3Jrc3BhY2UvY3VyaW8iLCJlbnYiOnsiQ1VSSU9fTExNX1BST1ZJREVSIjoibG1zdHVkaW8iLCJDVVJJT19MTE1fQkFTRV9VUkwiOiJodHRwOi8vbG9jYWxob3N0OjEyMzQvdjEiLCJDVVJJT19MTE1fQVBJX0tFWSI6ImxtLXN0dWRpbyJ9fQ=="><img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="Add MCP Server curio to LM Studio" /></a>
+<a href="https://lmstudio.ai/install-mcp?name=curio&config=eyJjb21tYW5kIjoiY3VyaW8tbWNwIiwiYXJncyI6W119"><img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="Add MCP Server curio to LM Studio" /></a>
+
+> Requires `pip install curio-ai` first — the button registers `curio-mcp`,
+> which that install puts on your PATH. If LM Studio still cannot connect, a
+> GUI-launched app may not see your PATH; edit `~/.lmstudio/mcp.json` to point
+> `command` at your interpreter instead — see
+> [docs/lmstudio-setup.md](docs/lmstudio-setup.md).
+
 
 ```
 $ curio teach "Auth uses JWT RS256" --domain "Auth"
@@ -41,8 +48,12 @@ pip install curio-ai
 # Or clone and run directly
 git clone https://github.com/Thrilok28021996/curio.git
 cd curio
+python3 -m venv .venv && .venv/bin/pip install -e .
 bash quickstart.sh
 ```
+
+`mcp>=2.0` is a hard dependency, so the MCP server works straight after install.
+It needs Python 3.10+ — the MCP SDK has no release for 3.9 or older.
 
 ## Usage
 
@@ -81,9 +92,27 @@ curio audit --last 10
 {
   "mcpServers": {
     "curio": {
-      "command": "python",
+      "command": "curio-mcp",
+      "args": [],
+      "env": {
+        "PYTHONPATH": "/path/to/curio"
+      }
+    }
+  }
+}
+```
+
+`curio-mcp` is installed by `pip install curio-ai`. Alternatively run from a
+checkout with the absolute interpreter, and keep `PYTHONPATH` set so it does not
+depend on the client honoring `cwd`:
+
+```json
+{
+  "mcpServers": {
+    "curio": {
+      "command": "/path/to/curio/.venv/bin/python",
       "args": ["-m", "src.mcp_server"],
-      "cwd": "/path/to/curio"
+      "env": { "PYTHONPATH": "/path/to/curio" }
     }
   }
 }
@@ -91,7 +120,14 @@ curio audit --last 10
 
 ### LM Studio (fully local)
 
-Click the install button above, or:
+Click the install button above, or copy `lmstudio-mcp.json` into place:
+
+```bash
+cp lmstudio-mcp.json ~/.lmstudio/mcp.json
+# edit "command"/"cwd"/"PYTHONPATH" to your own clone path, then restart LM Studio
+```
+
+Curio also reads these env vars, so it can call your local model:
 
 ```bash
 export CURIO_LLM_PROVIDER=lmstudio

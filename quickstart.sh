@@ -14,17 +14,27 @@ rm -f ~/.curio/knowledge.db ~/.curio/audit.jsonl
 
 cd "$(dirname "$0")"
 
+# Prefer the project venv: system python3 is 3.9 on macOS and cannot run the
+# MCP server (mcp needs 3.10+).
+if [ -x ".venv/bin/python" ]; then
+  PY=".venv/bin/python"
+else
+  PY="python3"
+fi
+echo "  Using interpreter: $PY ($($PY -V 2>&1))"
+echo ""
+
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  STEP 1: Teach Curio about your project"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src teach "This project uses FastAPI for the backend API framework" --domain "Backend"
-python -m src teach "Authentication uses JWT with RS256 signing" --domain "Auth"
-python -m src teach "Database is PostgreSQL with SQLAlchemy ORM" --domain "Database"
-python -m src teach "Rate limit is 100 requests per minute per user" --domain "API"
-python -m src teach "Deployment is on AWS ECS with Docker containers" --domain "Infrastructure"
+$PY -m src teach "This project uses FastAPI for the backend API framework" --domain "Backend"
+$PY -m src teach "Authentication uses JWT with RS256 signing" --domain "Auth"
+$PY -m src teach "Database is PostgreSQL with SQLAlchemy ORM" --domain "Database"
+$PY -m src teach "Rate limit is 100 requests per minute per user" --domain "API"
+$PY -m src teach "Deployment is on AWS ECS with Docker containers" --domain "Infrastructure"
 
 echo ""
 echo "  ✅ Taught 5 facts"
@@ -36,7 +46,7 @@ echo "  STEP 2: See what Curio knows"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src know
+$PY -m src know
 
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -44,8 +54,8 @@ echo "  STEP 3: Check confidence on a topic"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src confidence "JWT authentication"
-python -m src confidence "quantum physics"
+$PY -m src confidence "JWT authentication"
+$PY -m src confidence "quantum physics"
 
 echo ""
 
@@ -56,11 +66,11 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 echo "  Observing: 'CI/CD uses GitHub Actions with 3 stages'"
-python -m src observe "The CI/CD pipeline uses GitHub Actions with 3 stages: test, build, deploy" --source ".github/workflows/deploy.yml"
+$PY -m src observe "The CI/CD pipeline uses GitHub Actions with 3 stages: test, build, deploy" --source ".github/workflows/deploy.yml"
 
 echo ""
 echo "  Observing: 'Auth changed to OAuth2'"
-python -m src observe "Authentication is no longer using JWT, now uses OAuth2 with Google and GitHub providers" --source "auth_v2.py"
+$PY -m src observe "Authentication is no longer using JWT, now uses OAuth2 with Google and GitHub providers" --source "auth_v2.py"
 
 echo ""
 
@@ -70,7 +80,7 @@ echo "  STEP 5: Check what Curio knows now"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src know
+$PY -m src know
 
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -78,7 +88,7 @@ echo "  STEP 6: Check gaps"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src gaps
+$PY -m src gaps
 
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -86,7 +96,7 @@ echo "  STEP 7: See progress"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src progress
+$PY -m src progress
 
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -94,7 +104,7 @@ echo "  STEP 8: Run consolidation (forgetting)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src consolidate
+$PY -m src consolidate
 
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -102,7 +112,7 @@ echo "  STEP 9: See the audit trail"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src audit --last 10
+$PY -m src audit --last 10
 
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -110,7 +120,7 @@ echo "  STEP 10: Store stats"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-python -m src stats
+$PY -m src stats
 
 # ============================================================
 echo ""

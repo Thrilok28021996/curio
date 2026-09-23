@@ -24,7 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = []
+dependencies = ["mcp>=2.0"]
 
 [project.optional-dependencies]
 web = ["ddgs"]
@@ -34,6 +34,7 @@ dev = ["ddgs", "pyyaml", "pytest"]
 
 [project.scripts]
 curio = "src.cli:main"
+curio-mcp = "src.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/Thrilok28021996/curio"

@@ -1,10 +1,16 @@
 """Test that the Curio MCP server starts and exposes all tools."""
 
 import json
+import os
 import select
 import subprocess
 import sys
 import time
+from pathlib import Path
+
+# Repo root: tests/ -> <repo>. Never hardcode a machine-specific path here,
+# or the test breaks for every other clone location.
+_REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def _start_server():
@@ -14,7 +20,8 @@ def _start_server():
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        cwd="/Users/thrilok/workspace/curio",
+        cwd=str(_REPO_ROOT),
+        env={**os.environ, "PYTHONPATH": str(_REPO_ROOT)},
     )
 
 

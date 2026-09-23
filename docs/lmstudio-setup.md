@@ -29,6 +29,17 @@
 
 ## Setup (2 minutes)
 
+### 0. Create the environment (once)
+
+The MCP server needs Python 3.10+ — the `mcp` SDK publishes no release for 3.9
+or older, so `pip install mcp` fails outright on system Python.
+
+```bash
+cd /path/to/curio
+python3 -m venv .venv
+.venv/bin/pip install -e .      # installs mcp>=2.0 and the curio-mcp script
+```
+
 ### 1. Start LM Studio
 Load a model (Llama 3.1, Mistral, Qwen 2.5, etc.)
 
@@ -36,8 +47,12 @@ Load a model (Llama 3.1, Mistral, Qwen 2.5, etc.)
 
 ```bash
 # Copy the example config to LM Studio's MCP directory
-cp ~/workspace/curio/lmstudio-mcp.json ~/.lmstudio/mcp.json
+cp /path/to/curio/lmstudio-mcp.json ~/.lmstudio/mcp.json
 ```
+
+`lmstudio-mcp.json` ships with this machine's absolute paths. If you cloned
+elsewhere, change `command`, `cwd` and `PYTHONPATH` to your own clone path —
+`command` must be the venv interpreter (`.venv/bin/python`), never bare `python3`.
 
 Or manually add to `~/.lmstudio/mcp.json`:
 
@@ -45,10 +60,11 @@ Or manually add to `~/.lmstudio/mcp.json`:
 {
   "mcpServers": {
     "curio": {
-      "command": "python3",
+      "command": "/path/to/curio/.venv/bin/python",
       "args": ["-m", "src.mcp_server"],
-      "cwd": "~/curio",
+      "cwd": "/path/to/curio",
       "env": {
+        "PYTHONPATH": "/path/to/curio",
         "CURIO_LLM_PROVIDER": "lmstudio",
         "CURIO_LLM_BASE_URL": "http://localhost:1234/v1",
         "CURIO_LLM_API_KEY": "lm-studio"
@@ -57,6 +73,13 @@ Or manually add to `~/.lmstudio/mcp.json`:
   }
 }
 ```
+
+Notes on the three fields that matter:
+- `command` — absolute path to `.venv/bin/python`. Bare `python3` on macOS is
+  3.9, which cannot install `mcp` at all.
+- `cwd` — absolute path. Never `~/...`; JSON does not tilde-expand.
+- `PYTHONPATH` — makes the server start even if your MCP client ignores `cwd`
+  (Cursor/LM Studio-style configs do not guarantee it).
 
 ### 3. Restart LM Studio
 
@@ -134,15 +157,23 @@ LM Studio: Curio detected a CONTRADICTION!
 
 **MCP server not starting?**
 ```bash
-# Test Curio MCP server directly
-cd ~/workspace/curio
-python3 -m src.mcp_server
+# Test Curio MCP server directly, with the same interpreter the config uses
+cd /path/to/curio
+.venv/bin/python -m src.mcp_server
+# Ctrl-C to exit. A ModuleNotFoundError here means the venv is missing mcp.
 ```
+
+**`ModuleNotFoundError: No module named 'mcp'`**
+Your config is launching the wrong interpreter. `mcp` needs Python 3.10+; on
+macOS system `python3` (3.9) it is uninstallable. Point `command` at
+`.venv/bin/python` and re-run the test above.
 
 **LM Studio can't find the tools?**
 - Make sure LM Studio is restarted after adding the config
-- Check that `python3` is in your PATH
-- Check that the `cwd` path is correct
+- Check that `command` is an absolute path to `.venv/bin/python` (a bare
+  `python3` picks up system 3.9, and GUI apps often have a minimal PATH)
+- Check that the `cwd` path is correct and absolute — no `~`
+- Keep `PYTHONPATH` set so the server starts even if `cwd` is ignored
 
 **Tools not appearing in chat?**
 - LM Studio needs to support MCP tool calling
