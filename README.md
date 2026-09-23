@@ -6,11 +6,14 @@ Curio is an autonomous learning agent that detects knowledge gaps, seeks informa
 
 <a href="https://lmstudio.ai/install-mcp?name=curio&config=eyJjb21tYW5kIjoiY3VyaW8tbWNwIiwiYXJncyI6W119"><img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="Add MCP Server curio to LM Studio" /></a>
 
-> Requires `pip install curio-ai` first — the button registers `curio-mcp`,
-> which that install puts on your PATH. If LM Studio still cannot connect, a
-> GUI-launched app may not see your PATH; edit `~/.lmstudio/mcp.json` to point
-> `command` at your interpreter instead — see
-> [docs/lmstudio-setup.md](docs/lmstudio-setup.md).
+> **The button registers the command `curio-mcp`, which must already be on your
+> PATH.** `curio-ai` is *not on PyPI yet*, so today the only way to get that command
+> is to install from a clone (see Quick start) and expose that environment's `bin/`
+> directory to LM Studio.
+>
+> If LM Studio reports the server as failed, edit `~/.lmstudio/mcp.json` and point
+> `command` at your absolute interpreter path instead — the reliable option until the
+> package is published. See [docs/lmstudio-setup.md](docs/lmstudio-setup.md).
 
 
 ```
@@ -41,19 +44,22 @@ Curio implements a learning loop inspired by how children learn:
 
 ## Quick start
 
-```bash
-# Install
-pip install curio-ai
+Requires **Python 3.10+** — the `mcp` SDK publishes no release for 3.9 or older, so on
+macOS system `python3` an install fails with *No matching distribution found*. Install
+from a clone:
 
-# Or clone and run directly
+```bash
 git clone https://github.com/Thrilok28021996/curio.git
 cd curio
-python3 -m venv .venv && .venv/bin/pip install -e .
+python3 -m venv .venv
+.venv/bin/pip install -e .
 bash quickstart.sh
 ```
 
-`mcp>=2.0` is a hard dependency, so the MCP server works straight after install.
-It needs Python 3.10+ — the MCP SDK has no release for 3.9 or older.
+`mcp>=2.0` is a hard dependency, so the MCP server works straight after that install.
+
+> `pip install curio-ai` does not work yet — the package has not been published to
+> PyPI. It replaces the block above once it is.
 
 ## Usage
 
@@ -102,9 +108,10 @@ curio audit --last 10
 }
 ```
 
-`curio-mcp` is installed by `pip install curio-ai`. Alternatively run from a
-checkout with the absolute interpreter, and keep `PYTHONPATH` set so it does not
-depend on the client honoring `cwd`:
+`curio-mcp` is the console script an install creates — but until `curio-ai` is on
+PyPI it exists only inside an environment you built from a clone. The
+absolute-interpreter form below always works, and `PYTHONPATH` keeps it from
+depending on the client honoring `cwd`:
 
 ```json
 {
@@ -135,7 +142,29 @@ export CURIO_LLM_BASE_URL=http://localhost:1234/v1
 curio observe "Something new" --source "file.py"
 ```
 
-**With Altra (built-in fact-checking):** Enable Altra in LM Studio settings for web search with source verification. Curio detects gaps → Altra searches and fact-checks → Curio stores verified lessons.
+**With Altra (LM Studio's fact-checking plugins):**
+
+Altra is a *separate* LM Studio plugin family (`altra/web-search`, `altra/research`) — not
+part of Curio. Install `altra/web-search` from LM Studio Hub for cross-source verification:
+it reads full pages, reranks with `nomic-embed-text`, counts independent publishers, and
+exposes `fact_check` / `verify_statistic`.
+
+Chained with Curio in one chat, the flow is:
+
+```
+curio_observe   → detects a contradiction / gap
+Altra search    → reads pages, fact-checks across sources
+curio_teach     → stores the verified lesson with a confidence score
+```
+
+Two things to know:
+- The chain is **driven by the model**, not by Curio. No Curio code calls Altra — success
+  depends on the local model choosing to sequence the three tools.
+- `curio_observe` already triggers Curio's **own** DuckDuckGo search (`knowledge_seeker`)
+  when it finds a gap. If Altra is installed too you get two independent searches with
+  two different provenance models. Prefer Altra for verification; keep Curio's built-in
+  path for offline/no-Altra setups (requires the `web` extra:
+  `.venv/bin/pip install ".[web]"`).
 
 ### Python API
 
@@ -161,7 +190,6 @@ curio.close()
 | Tracks learning progress | ❌ | ✅ |
 | Confidence scoring | ❌ | ✅ |
 | Full audit trail | ❌ | ✅ |
-| Runs locally | ❌ | ✅ |
 
 ## Architecture
 
@@ -187,28 +215,43 @@ src/
 
 ```bash
 # Run all tests
-python tests/test_core.py
-python tests/test_validation.py
+.venv/bin/python tests/test_core.py
+.venv/bin/python tests/test_validation.py
+.venv/bin/python tests/test_mcp_server.py
 
 # Run benchmarks
-python eval/run_benchmark.py
+.venv/bin/python eval/run_benchmark.py
 ```
 
-**57 tests. 40 benchmarks. All passing.**
+**22 tests, 80 assertions — all passing.**
+
+40 benchmarks. The web-search benchmarks hit live search, so results vary run to run —
+expect 39–40 / 40, with `bench-027` the usual casualty when a search backend drops
+the connection. A green run is not proof of a code change.
 
 ## License
 
-MIT License — free to use, modify, and distribute. See [LICENSE](LICENSE) for details.
+**MIT-derived with a required attribution clause — not plain MIT.** See [LICENSE](LICENSE).
+
+The attribution term is deliberate: shipping Curio puts "Powered by Curio" in front of
+your users. PyPI therefore does **not** carry the `OSI Approved :: MIT License` classifier
+for this package — plain MIT has no usage obligations beyond retaining the notice.
 
 You can:
 - Use it commercially
 - Modify it
-- Distribute it
-- Include it in proprietary software
+- Redistribute it, including in proprietary software
 
-You must:
-- Include the copyright notice and license
-- Add visible attribution: "Powered by Curio" or "Built with Curio" in your product's UI, README, or documentation
+You must (unless exempt below):
+- Keep the copyright notice and the license text
+- Show a visible **"Powered by Curio"** or **"Built with Curio"** notice in your product's
+  UI, README, or documentation — or link this repository from your docs / about page.
+  This covers commercial products, open source projects that depend on Curio, and
+  internal tools deployed within organizations.
+
+Not required for:
+- Personal, private use with no external distribution
+- Contributions back to the Curio project itself
 
 ## Contributing
 
