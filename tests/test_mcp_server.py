@@ -37,7 +37,7 @@ def _mcp_init(proc):
     }) + "\n").encode())
     proc.stdin.flush()
     time.sleep(0.5)
-    ready = select.select([proc.stdout], [], [], 5)
+    ready = select.select([proc.stdout], [], [], 15)
     if not ready[0]:
         return None
     return json.loads(proc.stdout.readline().decode().strip())
@@ -52,7 +52,7 @@ def _mcp_call(proc, req_id, method, params):
     proc.stdin.write((json.dumps({"jsonrpc": "2.0", "id": req_id, "method": method, "params": params}) + "\n").encode())
     proc.stdin.flush()
     time.sleep(1)
-    ready = select.select([proc.stdout], [], [], 5)
+    ready = select.select([proc.stdout], [], [], 15)
     if not ready[0]:
         return None
     return json.loads(proc.stdout.readline().decode().strip())

@@ -60,9 +60,10 @@ class KnowledgeSeeker:
             sources.append(source)
             raw_texts.append(result.get("content", ""))
 
-        # If few local results, search the web
+        # If few local results, search the web — trying every query _build_queries
+        # produced, so a single flaky response cannot abort the whole seek.
         if len(raw_texts) < 2:
-            web_results = self._search_web(queries[0] if queries else gap.topic)
+            web_results = self._search_web(queries or [gap.topic])
             for result in web_results:
                 source = SourceRecord(
                     url=result.get("url", ""),
@@ -150,14 +151,28 @@ class KnowledgeSeeker:
         results.sort(key=lambda r: r["similarity"], reverse=True)
         return results[:self.max_sources]
 
-    def _search_web(self, query: str) -> list[dict[str, Any]]:
-        """Search the web for information about a topic."""
+    def _search_web(self, queries: str | list[str]) -> list[dict[str, Any]]:
+        """Search the web, trying each query until one returns results.
+
+        ``web_search`` returns ``None`` when the backend could not be reached
+        and ``[]`` when it answered with nothing — in both cases we fall
+        through to the next query instead of giving up on the seek.
+        """
+        if isinstance(queries, str):
+            queries = [queries]
+
         try:
             from .web_search import web_search
-            return web_search(query, max_results=3)
         except ImportError:
             # Web search not available
             return []
+
+        for query in queries:
+            results = web_search(query, max_results=3)
+            if results:
+                return results
+
+        return []
 
     def record_source_accuracy(self, source_id: str, was_accurate: bool):
         """Record whether a source was accurate when used.
