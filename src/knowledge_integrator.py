@@ -52,6 +52,18 @@ class KnowledgeIntegrator:
         # Extract the lesson (compressed, not raw text)
         lesson = self._extract_lesson(gap, raw_info)
 
+        # Check for duplicate content — don't store the same lesson twice
+        existing = self.store.search_knowledge()
+        lesson_lower = lesson.strip().lower()
+        for node in existing:
+            if node.content.strip().lower() == lesson_lower:
+                # Already have this — just reinforce it
+                node.reinforcement_count += 1
+                node.last_reinforced = _now()
+                self.store.store_knowledge(node)
+                self.store.update_gap_status(gap.gap_id, "RESOLVED")
+                return node
+
         # Find connections to existing knowledge
         connections = self._find_connections(lesson, gap)
 
@@ -104,38 +116,71 @@ class KnowledgeIntegrator:
         Uses LLM for intelligent extraction when available.
         Falls back to basic extraction.
         """
+        # Only try LLM if it's actually configured
         try:
-            from .llm import extract_lesson
-            lesson = extract_lesson(raw_info.raw_text, gap.topic)
-            if lesson and len(lesson) > 10:
-                return lesson
+            from .llm import get_llm
+            llm = get_llm()
+            if llm.is_available():
+                from .llm import extract_lesson
+                lesson = extract_lesson(raw_info.raw_text, gap.topic)
+                if lesson and len(lesson) > 10:
+                    return lesson
         except Exception as e:
             self.logger.debug(f"LLM extraction failed, using fallback: {e}")
 
-        # Fallback: basic extraction
+        # Fallback: basic extraction (filters noise)
         return self._simple_extract(gap, raw_info)
 
     def _simple_extract(self, gap: Gap, raw_info: RawInfo) -> str:
-        """Basic extraction without LLM."""
+        """Basic extraction without LLM — filters out noise."""
         text = raw_info.raw_text
-        topic_lower = gap.topic.lower()
+        topic_words = set(gap.topic.lower().split())
         lines = text.split("\n")
+
+        # Noise patterns to skip
+        noise_patterns = [
+            "http://", "https://", "www.", ".com", ".org", ".net",
+            "cookie", "privacy policy", "terms of service", "sign in",
+            "log in", "subscribe", "newsletter", "©", "copyright",
+            "see step by step", "click here", "read more", "advertisement",
+        ]
+
+        # Date patterns like "Aug 29, 2023 ·"
+        import re
+        date_pattern = re.compile(r'\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}')
 
         relevant_lines = []
         for line in lines:
+            line = line.strip()
+            if len(line) < 20:
+                continue  # Too short to be a lesson
+            if len(line) > 500:
+                line = line[:500]
+
             line_lower = line.lower()
-            if any(word in line_lower for word in topic_lower.split()):
-                relevant_lines.append(line.strip())
-            elif any(marker in line_lower for marker in [
-                "is a", "refers to", "means", "defined as",
-                "the rule", "the requirement", "must", "shall",
-                "config", "setting", "parameter", "default",
-            ]):
-                relevant_lines.append(line.strip())
+
+            # Skip noise
+            if any(noise in line_lower for noise in noise_patterns):
+                continue
+            if date_pattern.search(line):
+                continue
+
+            # Keep if it mentions the topic AND has substance
+            if any(word in line_lower for word in topic_words) and len(line) > 30:
+                relevant_lines.append(line)
 
         if relevant_lines:
-            return "\n".join(relevant_lines[:10])
-        return text[:500]
+            # Take the first substantial line
+            return relevant_lines[0]
+
+        # Fallback: first meaningful sentence
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        for s in sentences:
+            s = s.strip()
+            if len(s) > 30 and not any(noise in s.lower() for noise in noise_patterns):
+                return s[:300]
+
+        return gap.topic  # Last resort: just the topic
 
     def _find_connections(self, lesson: str, gap: Gap) -> list[str]:
         """Find existing knowledge nodes that relate to this lesson."""
