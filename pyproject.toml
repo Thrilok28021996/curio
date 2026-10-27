@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "curio-ai"
-version = "0.1.1"
+version = "0.1.2"
 description = "AI that knows what it doesn't know — and learns it."
 readme = "README.md"
 license = "LicenseRef-Curio-Attribution"
