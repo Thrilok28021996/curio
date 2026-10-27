@@ -27,9 +27,18 @@ class KnowledgeMap:
         return self._all_domains()
 
     def what_i_know(self, top_n: int = 10) -> list[dict[str, Any]]:
-        """Return the top N things Curio knows, by confidence."""
+        """Return the top N things Curio knows, sorted by recency (newest first)."""
         nodes = self.store.search_knowledge()
-        nodes.sort(key=lambda n: n.confidence, reverse=True)
+        nodes.sort(key=lambda n: n.created_at, reverse=True)
+
+        # Deduplicate by content
+        seen = set()
+        unique = []
+        for n in nodes:
+            key = n.content.strip().lower()
+            if key not in seen:
+                seen.add(key)
+                unique.append(n)
 
         return [
             {
@@ -41,7 +50,7 @@ class KnowledgeMap:
                 "access_count": n.access_count,
                 "last_accessed": n.last_accessed,
             }
-            for n in nodes[:top_n]
+            for n in unique[:top_n]
         ]
 
     def what_i_dont_know(self) -> list[dict[str, Any]]:
