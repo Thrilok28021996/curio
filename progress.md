@@ -12,7 +12,7 @@
 - Decided product path: developer learning agent → general learning engine/SDK → personal assistant.
 
 ### Build session
-- Created full project structure at ~/workspace/curio/
+- Created full project structure at /Volumes/personal/programmingFolders/curio/
 - Implemented 11 Python source files:
   - models.py — data types (Observation, Gap, KnowledgeNode, etc.)
   - audit_log.py — append-only JSONL audit trail
